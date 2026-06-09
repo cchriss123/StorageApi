@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using StorageApi.Data;
+
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<StorageContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("StorageContext") ?? throw new InvalidOperationException("Connection string 'StorageContext' not found.")));
@@ -16,6 +17,10 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<StorageContext>();
+    db.Database.Migrate();
+
     app.MapOpenApi();
 }
 
@@ -24,5 +29,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

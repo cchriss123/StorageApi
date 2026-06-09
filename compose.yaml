@@ -4,4 +4,24 @@
     build:
       context: .
       dockerfile: StorageApi/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__StorageContext: "Server=db,1433;Database=StorageDb;User Id=sa;Password=Password123!;TrustServerCertificate=True;"
+    depends_on:
+      - db
 
+  db:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: storageapi-db
+    environment:
+      ACCEPT_EULA: "1"
+      MSSQL_SA_PASSWORD: "Password123!"
+    ports:
+      - "1434:1433"
+    volumes:
+      - storageapi-sql-data:/var/opt/mssql
+
+volumes:
+  storageapi-sql-data:
