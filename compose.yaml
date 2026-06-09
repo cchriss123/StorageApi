@@ -1,0 +1,7 @@
+﻿services:
+  storageapi:
+    image: storageapi
+    build:
+      context: .
+      dockerfile: StorageApi/Dockerfile
+
