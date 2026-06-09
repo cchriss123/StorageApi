@@ -1,12 +1,12 @@
 namespace StorageApi.Models;
 
-public class Product(int id, string name, int price, string category, string shelf, int count, string description)
+public class Product
 {
-    int Id  { get; set; } = id;
-    string Name   { get; set; } = name;
-    int Price   { get; set; } = price;
-    string Category   { get; set; } = category;
-    string Shelf    { get; set; } = shelf;
-    int Count   { get; set; } = count;
-    string Description   { get; set; } = description;
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+    public int Price { get; set; }
+    public string Category { get; set; } = "";
+    public string Shelf { get; set; } = "";
+    public int Count { get; set; }
+    public string Description { get; set; } = "";
 }
