@@ -10,7 +10,10 @@ builder.Services.AddDbContext<StorageContext>(options =>
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -21,7 +24,9 @@ if (app.Environment.IsDevelopment())
     var db = scope.ServiceProvider.GetRequiredService<StorageContext>();
     db.Database.Migrate();
 
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    
 }
 
 app.UseHttpsRedirection();
