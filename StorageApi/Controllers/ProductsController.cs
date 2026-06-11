@@ -78,7 +78,7 @@ namespace StorageApi.Controllers
         }
 
         // DELETE: api/Products/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await context.Product.FindAsync(id);
@@ -97,5 +97,23 @@ namespace StorageApi.Controllers
         {
             return context.Product.Any(e => e.Id == id);
         }
+        
+        [HttpGet("stats")]
+        public async Task<int> AmountOfProducts()
+        {
+            return await context.Product.CountAsync();
+        }
+
+        [HttpGet]
+        public async Task<List<ProductDto>> GetProductBySearch(string? category, string? name)
+        {
+            return ProductMapper.Map(
+                await context.Product
+                    .Where(p => 
+                        (category == null || p.Category == category) && 
+                        (name == null || p.Name.Contains(name)))
+                    .ToListAsync());
+        }
+        
     }
 }
