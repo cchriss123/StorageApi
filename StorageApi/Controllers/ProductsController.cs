@@ -11,12 +11,16 @@ namespace StorageApi.Controllers
     [ApiController]
     public class ProductsController(StorageContext context) : ControllerBase
     {
-        // GET: api/Products
+        // // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProduct()
+        public async Task<List<ProductDto>> GetProductBySearch(string? category, string? name)
         {
-            var products = await context.Product.ToListAsync();
-            return Ok(ProductMapper.Map(products));
+            return ProductMapper.Map(
+                await context.Product
+                    .Where(p => 
+                        (category == null || p.Category == category) && 
+                        (name == null || p.Name.Contains(name)))
+                    .ToListAsync());
         }
 
         // GET: api/Products/5
@@ -104,16 +108,6 @@ namespace StorageApi.Controllers
             return await context.Product.CountAsync();
         }
 
-        [HttpGet]
-        public async Task<List<ProductDto>> GetProductBySearch(string? category, string? name)
-        {
-            return ProductMapper.Map(
-                await context.Product
-                    .Where(p => 
-                        (category == null || p.Category == category) && 
-                        (name == null || p.Name.Contains(name)))
-                    .ToListAsync());
-        }
-        
+
     }
 }
