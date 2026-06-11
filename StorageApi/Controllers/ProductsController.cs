@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StorageApi.Data;
-using StorageApi.Models;
+using StorageApi.Dto;
+using StorageApi.Mapper;
 
 namespace StorageApi.Controllers
 {
@@ -16,35 +13,36 @@ namespace StorageApi.Controllers
     {
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProduct()
         {
-            return await context.Product.ToListAsync();
+            var products = await context.Product.ToListAsync();
+            return Ok(ProductMapper.Map(products));
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
             var product = await context.Product.FindAsync(id);
-
+            
             if (product == null)
             {
                 return NotFound();
             }
-
-            return product;
+            return new ProductDto(product);
         }
 
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct(int id, ProductDto dto)
         {
-            if (id != product.Id)
+            if (id != dto.Id)
             {
                 return BadRequest();
             }
-
+            
+            var product = ProductMapper.Map(dto);
             context.Entry(product).State = EntityState.Modified;
 
             try
@@ -69,12 +67,14 @@ namespace StorageApi.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<ProductDto>> PostProduct(ProductDto dto)
         {
+            
+            var product = ProductMapper.Map(dto);
             context.Product.Add(product);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            return CreatedAtAction("GetProduct", new { id = product.Id }, new ProductDto(product));
         }
 
         // DELETE: api/Products/5
